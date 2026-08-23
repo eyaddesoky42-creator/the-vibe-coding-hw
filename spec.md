@@ -95,3 +95,4 @@ AC-19 Given a user books an appointment on a Tuesday from 09:00 to 10:00
 
 NON-GOAL  No user accounts / login (v1)
 NON-GOAL  No booking buffer/gap enforcement between appointments (v1)
+[NEEDS CLARIFICATION]  What is the minimum/maximum number of attendees allowed per booking?
