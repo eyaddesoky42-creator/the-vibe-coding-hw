@@ -30,15 +30,19 @@ AC-5  Given an appointment scheduled on 2026-12-01 from 08:00 to 09:00,
       when a user tries to book 2026-09-01 from 08:00 to 09:00 (exact match),
       then the booking is rejected with an error.
 
+
 AC- 6 Given an appointment scheduled on 2026-12-01 from 08:00 to 09:00,
       when a user tries to book 2026-09-01 from 08:30 to 09:30 (partial overlap),
       then the booking is rejected with an error
+      
 AC-7  Given an appointment scheduled on 2026-12-01 from 08:00 to 09:00,
       when a user tries to book 2026-09-01 from 10:00 to 11:00 (empty schedule),
       then the booking succeeds.      
+      
 AC-8  Given an appointment scheduled on 2026-12-01 from 08:00 to 09:00,
       when a user tries to book 2026-09-01 from 09:00 to 11:00 (Back-to-back),
       then the booking succeeds.      
+      
 FR-3  A user (identified by email) cannot have more than one appointment on
       the same date. A booking attempt with an email that already has an
       appointment on that date is rejected with an error
@@ -46,26 +50,32 @@ FR-3  A user (identified by email) cannot have more than one appointment on
 AC-9  AC-9  Given [email protected] has an appointment on 2026-12-01,
       when [email protected] tries to book an appointment on 2026-12-02,
       then the booking succeeds.
+      
 AC-10  Given [email protected] has an appointment on 2026-12-01,
       when [email protected] tries to book an appointment on 2026-12-01,
       then the booking is rejected with an error
 AC-11  Given [email protected] has an appointment on 2026-12-01,
       when [email protected] tries to book an appointment on 2026-12-01, (different email with no conflicts)
       then the booking succeeds.
+      
 FR-4  An appointment's start time must be at least 2 hours after the time of booking. 
       Bookings that start sooner than 2 hours from now are rejected with an error.
+      
 AC-12 Given the booking time is 2026-09-01 09:00,
       when a user tries to book an appointment starting at 2026-09-01 10:00
       (only 1 hour away),
       then the booking is rejected with an error.
+      
 AC-13 Given the booking time is 2026-09-01 09:00,
       when a user tries to book an appointment starting at 2026-09-01 11:00
       (2 hour away),
       then the booking succeeds.      
+      
 AC-14 Given the booking time is 2026-09-01 09:00,
       when a user tries to book an appointment starting at 2026-09-01 11:00
       (a day after, more than the 2 hours minimum),
       then the booking succeeds.
+      
 FR-5  Appointments can only be booked on Sunday through Thursday, between
       8:00 AM and 6:00 PM. Bookings on Friday, Saturday, or outside these
       hours are rejected with an error. Both the start time and the end
