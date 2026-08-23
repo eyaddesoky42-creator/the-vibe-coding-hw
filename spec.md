@@ -96,3 +96,5 @@ AC-19 Given a user books an appointment on a Tuesday from 09:00 to 10:00
 NON-GOAL  No user accounts / login (v1)
 NON-GOAL  No booking buffer/gap enforcement between appointments (v1)
 [NEEDS CLARIFICATION]  What is the minimum/maximum number of attendees allowed per booking?
+[NEEDS CLARIFICATION]  Does the email need to be validated as a real email format (e.g. must contain "@"), or is any non-empty string accepted?
+[NEEDS CLARIFICATION]  Can appointments start at any minute (e.g. 10:07), or only at fixed increments (e.g. every 15 or 30 minutes)?
