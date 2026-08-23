@@ -1,0 +1,38 @@
+Read through it. Here's what I found, grouped by your four questions.
+
+## Rules readable more than one way
+
+1. **Contact field requirement (FR-1 vs AC-3)** — FR-1 says "at least one of: email, phone," but AC-3 rejects any booking with a missing email. An implementer can't tell which rule is real. (See contradictions.)
+2. **Containment overlap (FR-2)** — "exact slots and any partial overlap" never says whether a *new* booking that fully *contains* an existing one counts. Readable as "edges cross" or "any intersection." Implementations can legitimately differ.
+3. **Hour boundary inclusivity (FR-5)** — "both start and end must fall within 8:00–18:00": is a start at exactly 08:00 or an end at exactly 18:00 legal? You pinned down the back-to-back boundary in FR-2 but not this one, and no AC tests it.
+4. **Email identity matching (FR-3)** — case sensitivity and whitespace are unspecified. Is `A@x.com` the same user as `a@x.com `? The duplicate rule's enforceability depends entirely on this.
+5. **Timezone** — never stated. "Same date" (FR-3), "time of booking" (FR-4), and "Sunday–Thursday" (FR-5) all shift depending on whose clock — server or client. For a real deployment this changes outcomes.
+6. **Attendee values** — you flag min/max, but even validity is open: is an explicit `0`, `-3`, or non-number rejected or defaulted?
+7. **Booking duration** — no min or max. Nothing says whether 08:00–18:00 (all day) is one legal booking, and nothing catches start == end or end before start.
+
+## Missing that a real implementation needs
+
+1. **Concurrency** — the app's entire premise is "no double-booking," yet FR-2 only describes *sequential* overlap checks. Nothing requires that two simultaneous requests for the same slot can't both succeed. Every AC could pass while the core promise fails under load.
+2. **Cancel / reschedule** — absent entirely. Combined with FR-3, a user who typos their date is permanently locked out of that date under that email, forever.
+3. **Malformed input** — ACs cover missing fields but not garbage ones: `2026-02-30`, unparseable times. AC-1's "valid values" is never defined.
+4. **Phone rules** — you have a clarification item for email format but nothing for phone (format, digits-only, length?). And see contradiction #2 below.
+5. **Viewing the schedule** — can anyone see existing appointments? Even if intentionally out of scope, say so.
+6. **Error differentiation** — everything is "rejected with an error." Conflict vs. closed day vs. too-soon are indistinguishable to the caller. Fine for v1 maybe, but it's a decision that should be written down.
+
+## Edge cases the ACs don't actually test
+
+1. **AC-5, AC-6, AC-8 use the wrong dates.** The fixture appointment is on **2026-12-01**, but every attempt books on **2026-09-01**. As written, all three attempt bookings on a day with no appointments: an implementation with *no overlap logic whatsoever* passes AC-5 and AC-6. Your three core conflict tests verify nothing. Only AC-7 is internally consistent.
+2. **AC-14 contradicts its own annotation** — labeled "a day after" but books 2026-09-01 11:00 against a 09:00 booking time: same day. It's a duplicate of AC-13, and the >24h case goes untested.
+3. **AC-11 is unexecutable as written** — the "different email" is rendered identically to the original (`[email protected]` everywhere — appears mangled). You can't tell which address is which, so the test can't be built from it.
+4. No test for a new booking **containing** an existing one (the ambiguous FR-2 reading above).
+5. No test at the exact hour boundaries (start 08:00, end 18:00).
+6. No test for **phone-only** bookings — does it succeed? Does FR-3 then apply or not?
+7. No test for zero-length or reversed time ranges.
+
+## Quiet contradictions
+
+1. **FR-1 ↔ AC-3**: FR-1 permits phone-instead-of-email; AC-3 rejects missing email outright. One must yield.
+2. **FR-1 ↔ FR-3**: FR-3 restricts users *by email*, but FR-1 lets someone book with only a phone. Phone-only bookers get unlimited same-day appointments — almost certainly not intended, but it follows from the text.
+3. **AC-5/6/8 ↔ FR-2**: they're framed as the verification of the overlap rule but exercise a different date entirely, so they don't just miss the rule — they'd certify an implementation that ignores it.
+
+The two most consequential items: the broken dates in AC-5/6/8 (your safety net for the app's core feature has holes in it), and the unspecified concurrency behavior (the thing the app exists to guarantee is only defined for the easy, sequential case).
