@@ -1,0 +1,7 @@
+- Python 3.11+. FastAPI for HTTP. Pytest for tests.
+- No new dependency without a one-line justification in plan.md.
+- Every endpoint ships one happy-path and one error-path test.
+- Errors return {"error": {"code": "...", "message": "..."}} — never a stack trace.
+- All input validated at the boundary.
+- No secrets in code or git. Config from environment variables.
+- Definition of Done: tests pass, every FR traced, no TODOs shipped.
